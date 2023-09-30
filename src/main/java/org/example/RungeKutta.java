@@ -5,7 +5,7 @@ package org.example;
  */
 public class RungeKutta {
 
-    public static double[] solve(double[] x0, double t0, double t1, double h, Function f) {
+    public static double[][] solve(double[] x0, double t0, double t1, double h, Function f) {
         double[] t = new double[(int) ((t1 - t0) / h) + 1];
         double[][] x = new double[t.length + 1][x0.length];
         t[0] = t0;
@@ -19,7 +19,7 @@ public class RungeKutta {
                     times((sum(sum(sum(k1, times(k2, 2)), times(k3, 2)), k4)), 1D / 6));
             t[i] = t[i - 1] + h;
         }
-        return x[t.length - 1];
+        return x;
     }
 
     private static double[] sum(double[] arr1, double[] arr2) {

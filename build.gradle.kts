@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.opencsv:opencsv:4.1")
     implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("org.scilab.forge:jlatexmath:1.0.7")
     implementation("guru.nidi:graphviz-java:0.18.1")

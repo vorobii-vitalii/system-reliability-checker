@@ -1,15 +1,14 @@
 package org.example;
 
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Label;
-import guru.nidi.graphviz.attribute.Rank;
+import com.opencsv.CSVWriter;
+import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Link;
 import guru.nidi.graphviz.model.MutableGraph;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -91,6 +90,9 @@ public class Main {
 
         Map<String, Node> nodeById = new HashMap<>();
 
+        Color[] colors = new Color[]{Color.RED, Color.GREEN, Color.DARKGOLDENROD, Color.GRAY, Color.BLUE};
+        AtomicInteger m = new AtomicInteger();
+
         // пошук в ширину
         while (!stateQueue.isEmpty()) {
             var state = stateQueue.poll();
@@ -100,7 +102,7 @@ public class Main {
             visited.add(state.elements());
             var node = createIfNeeded(nodeById, state);
             if (state.isValid()) {
-                node.getMutableNode().add(Color.GREEN);
+                node.getMutableNode().add(Color.GREEN).add(Font.size(25));
                 for (int i = 0; i < elements; i++) {
                     if (state.elements().isDisabled(i)) {
                         continue;
@@ -114,8 +116,12 @@ public class Main {
                         node.addOutgoing(new Edge(connectedNode, alpha));
                         connectedNode.addIncoming(new Edge(node, alpha));
 
+                        Color color = colors[(m.getAndIncrement()) % colors.length];
                         Link edge = node.getMutableNode().linkTo(connectedNode.getMutableNode())
-                                .with(Color.BLACK)
+                                .with(color)
+                                .with(color.labelFont())
+                                .with(Style.BOLD)
+                                .with(Font.size(18))
                                 .with(Label.html("&#945; = " + alpha.value()));
                         node.getMutableNode().addLink(edge);
                         stateQueue.add(newState);
@@ -123,14 +129,14 @@ public class Main {
                 }
             }
             else {
-                node.getMutableNode().add(Color.RED);
+                node.getMutableNode().add(Color.RED).add(Font.size(25));
                 System.out.println("State " + state + " invalid!");
             }
             g.add(node.getMutableNode());
         }
 
         System.out.println("Генерую граф...");
-        File output = new File("example/" + LAB_1 + "_Graph.png");
+        File output = new File("result/" + LAB_1 + "_Graph.png");
         Graphviz.fromGraph(g)
                 .render(Format.PNG)
                 .toFile(output);
@@ -147,12 +153,9 @@ public class Main {
         System.out.println("Система диф рівнянь відображена");
 
         int x0 = 0;
-        int y0 = 1;
-        double t = 33;
-        double h = 0.0001;
-
-        // 33 = 0.9989805075250527
-        // 66 = 0.9960438183818878
+        double y0 = 1;
+        double t = 100;
+        double h = 0.1;
 
         System.out.println("Рахую ймовірності");
 
@@ -161,13 +164,17 @@ public class Main {
 
         double[] constantArray = createConstantArray(nodes, 0);
         constantArray[0] = y0;
-        double[] res = RungeKutta.solve(constantArray, x0, t, h, (x, t1) -> {
+        double[][] iterationsResults = RungeKutta.solve(constantArray, x0, t, h, (x, t1) -> {
             double[] res1 = new double[nodes];
             for (int i = 0; i < nodes; i++) {
                 res1[i] = map.get(i).calculateDerivative(x, t1);
             }
             return res1;
         });
+        System.out.println("Відображаю таблицю обчислень");
+        writeRungeKuttaIterationsResult(iterationsResults);
+
+        var res = iterationsResults[iterationsResults.length - 2];
         double sum = Arrays.stream(res).sum();
         System.out.println("Початкова сума = " + sum);
         double sumValid = 0;
@@ -179,6 +186,30 @@ public class Main {
             }
         }
         System.out.println("Ймовірність того що система буде в валідному стані = " + sumValid);
+    }
+
+    private static void writeRungeKuttaIterationsResult(double[][] iterationsResults) throws IOException {
+        try (CSVWriter writer = new CSVWriter(new FileWriter("result/" + LAB_1 + "_table.csv"))) {
+            int numStates = iterationsResults[0].length;
+            var headerRow = new String[numStates + 2];
+            headerRow[0] = "Номер ітерації";
+            for (int i = 0; i < numStates; i++) {
+                headerRow[i + 1] = "P(" + (i + 1) + ")";
+            }
+            headerRow[headerRow.length - 1] = "Cума P(i), 1 <= i <= m";
+            writer.writeNext(headerRow);
+            for (int i = 0; i < iterationsResults.length - 1; i++) {
+                var iteration = iterationsResults[i];
+                var row = new String[iteration.length + 2];
+                row[0] = "Ітерація " + i;
+                for (int j = 0; j < iteration.length; j++) {
+                    row[j + 1] = String.valueOf(iteration[j]);
+                }
+                row[row.length - 1] = String.valueOf(Arrays.stream(iteration).sum());
+                writer.writeNext(row);
+            }
+        }
+
     }
 
     private static double[] createConstantArray(int n, double c) {
