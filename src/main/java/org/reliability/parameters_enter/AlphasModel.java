@@ -1,4 +1,8 @@
-package org.example;
+package org.reliability.parameters_enter;
+
+import org.reliability.dto.ComponentDetails;
+import org.reliability.generic.Observable;
+import org.reliability.generic.Observer;
 
 import java.util.HashSet;
 import java.util.Set;

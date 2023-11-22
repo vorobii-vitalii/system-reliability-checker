@@ -1,4 +1,7 @@
-package org.example;
+package org.reliability.parameters_enter;
+
+import org.reliability.generic.Observer;
+import org.reliability.dto.Alpha;
 
 import javax.swing.*;
 import java.math.BigDecimal;

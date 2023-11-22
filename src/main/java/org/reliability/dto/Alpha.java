@@ -1,4 +1,4 @@
-package org.example;
+package org.reliability.dto;
 
 import java.math.BigDecimal;
 

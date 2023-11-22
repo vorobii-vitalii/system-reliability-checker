@@ -1,7 +1,6 @@
-package org.example;
+package org.reliability.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.reliability.graph.Graph;
 
 public record State(Graph graph, Elements elements) {
     public String serialize() {

@@ -1,4 +1,11 @@
-package org.example;
+package org.reliability.task1;
+
+import org.reliability.dto.ComponentType;
+import org.reliability.graph.Graph;
+import org.reliability.parameters_enter.AlphasModel;
+import org.reliability.parameters_enter.ComponentDetailsEnterPanel;
+import org.reliability.parameters_enter.HardwareAndSoftwareAlphaEnterComponent;
+import org.reliability.parameters_enter.OnlyHardwareAlphaEnterComponent;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,7 @@
-package org.example;
+package org.reliability.parameters_enter;
+
+import org.reliability.dto.ComponentDetails;
+import org.reliability.dto.ComponentType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.function.Supplier;
 
-public abstract class ComponentDetailsEnterPanel extends JPanel  {
+public abstract class ComponentDetailsEnterPanel extends JPanel {
     private static final ComponentType DEFAULT_TYPE = ComponentType.ONLY_HARDWARE;
 
     public ComponentDetailsEnterPanel(

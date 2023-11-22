@@ -1,4 +1,4 @@
-package org.example;
+package org.reliability.dto;
 
 public enum ComponentType {
     ONLY_HARDWARE,

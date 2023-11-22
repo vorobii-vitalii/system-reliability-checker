@@ -1,6 +1,7 @@
-package org.example;
+package org.reliability.graph;
 
 import guru.nidi.graphviz.model.MutableNode;
+import org.reliability.dto.State;
 
 import java.util.*;
 import java.util.stream.Collectors;

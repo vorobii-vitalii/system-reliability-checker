@@ -1,4 +1,4 @@
-package org.example;
+package org.reliability.algo;
 
 /**
  * @author Vitalii Vorobii

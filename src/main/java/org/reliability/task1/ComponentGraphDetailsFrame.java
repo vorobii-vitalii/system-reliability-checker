@@ -1,4 +1,4 @@
-package org.example;
+package org.reliability.task1;
 
 import guru.nidi.graphviz.attribute.Color;
 import guru.nidi.graphviz.attribute.Font;
@@ -8,12 +8,18 @@ import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Link;
 import guru.nidi.graphviz.model.MutableGraph;
+import org.reliability.dto.ComponentDetails;
+import org.reliability.dto.Elements;
+import org.reliability.algo.RungeKutta;
+import org.reliability.dto.State;
+import org.reliability.graph.Edge;
+import org.reliability.graph.Graph;
+import org.reliability.graph.Node;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
