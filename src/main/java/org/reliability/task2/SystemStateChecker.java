@@ -1,5 +1,7 @@
 package org.reliability.task2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,15 +33,16 @@ public class SystemStateChecker {
         var stateToReturnIfPathPossible = nodeIndex != START && elements.get(nodeIndex).isRecovering()
                 ? SystemStateCheckResult.RECOVERABLE
                 : SystemStateCheckResult.WORKING;
+        boolean foundRecoverable = false;
         for (Integer adjNode : list) {
             SystemStateCheckResult state = checkState(adjNode, elements);
             if (state == SystemStateCheckResult.RECOVERABLE) {
-                return SystemStateCheckResult.RECOVERABLE;
+                foundRecoverable = true;
             } else if (state == SystemStateCheckResult.WORKING) {
                 return stateToReturnIfPathPossible;
             }
         }
-        return SystemStateCheckResult.TERMINATED;
+        return foundRecoverable ? SystemStateCheckResult.RECOVERABLE : SystemStateCheckResult.TERMINATED;
     }
 
 }

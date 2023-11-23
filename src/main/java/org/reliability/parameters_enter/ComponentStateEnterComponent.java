@@ -40,7 +40,7 @@ public class ComponentStateEnterComponent extends JPanel implements Observable<C
 
         }, null));
         if (!isAlwaysRecoverable) {
-            this.add(new JLabel("Введіть коефіцієнт відновлення для компоненту " + componentId));
+            this.add(new JLabel("Введіть кількість відновлень " + componentId));
             this.add(
                 createNumberInput(num -> {
                     numRetries.set(num.intValue());

@@ -19,7 +19,7 @@ public class RecoverableElementsEnterComponent extends JPanel implements Observa
         List<RecoverableElement> elements = Collections.synchronizedList(new ArrayList<>());
         for (var i = 0; i < n; i++) {
             var map = componentsByElementList.get(i);
-            var component = new RecoverableElementEnterComponent(i, map);
+            var component = new RecoverableElementEnterComponent(i + 1, map);
             this.add(component);
             int elementIndex = i;
             elements.add(null);
@@ -38,7 +38,6 @@ public class RecoverableElementsEnterComponent extends JPanel implements Observa
             });
         }
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//        this.setLayout(new GridLayout(componentsByElementList.size(), 1));
     }
 
     @Override
