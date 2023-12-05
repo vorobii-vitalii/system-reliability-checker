@@ -5,12 +5,21 @@ import org.reliability.dto.Alpha;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public record RecoverableElement(Map<ComponentKind, ComponentState> componentStateByKind) {
 
     public boolean isValid() {
         return !isTerminated() && !isRecovering();
+    }
+
+    public String serializeToHTML() {
+        return componentStateByKind.entrySet()
+                .stream()
+                .map(e -> e.getKey() + " => " + e.getValue().serialize())
+                .map(e -> "[" + e + "]")
+                .collect(Collectors.joining(", "));
     }
 
     public boolean isTerminated() {

@@ -4,6 +4,7 @@ import org.reliability.dto.Alpha;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -11,6 +12,19 @@ public record RecoverableElements(List<RecoverableElement> recoverableElements) 
 
     public RecoverableElement get(int index) {
         return recoverableElements.get(index);
+    }
+
+    public String serializeToHTML() {
+        return recoverableElements.stream()
+                .map(element -> {
+                    if (element.isRecovering()) {
+                        return "0'";
+                    } else if (element.isTerminated()) {
+                        return "0";
+                    }
+                    return "1";
+                })
+                .collect(Collectors.joining());
     }
 
     public List<ElementsTransition> calculateTransitions(SystemStateChecker systemStateChecker) {

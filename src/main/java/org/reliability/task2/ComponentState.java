@@ -12,6 +12,21 @@ public record ComponentState(
         boolean isTerminated
 ) {
 
+    public String serialize() {
+        if (isRecovering) {
+            return "Recovering " + serializeFailRecoveries();
+        }
+        if (isTerminated) {
+            return "Terminated";
+        }
+        return "Working " + serializeFailRecoveries();
+    }
+
+    private String serializeFailRecoveries() {
+        return "Recoveries left: " + (failState.isInfiniteRecoveryAllowed() ? "∞" : failState.getNumRecoveryLeft());
+    }
+
+
     public List<ComponentStateTransition> calculateOtherStates() {
         if (isTerminated) {
             return List.of();

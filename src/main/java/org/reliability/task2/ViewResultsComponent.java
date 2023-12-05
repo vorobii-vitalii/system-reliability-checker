@@ -122,8 +122,8 @@ public class ViewResultsComponent extends JPanel {
                         });
                 var tableData = calculateTableData(iterationsResults);
                 var headers = createHeaders(iterationsResults);
-                JTable table = new JTable(tableData, headers);
-                JScrollPane scrollPane = new JScrollPane(table);
+                var table = new JTable(tableData, headers);
+                var scrollPane = new JScrollPane(table);
                 resultsPane = scrollPane;
                 table.setFillsViewportHeight(true);
                 add(scrollPane);
@@ -224,9 +224,14 @@ public class ViewResultsComponent extends JPanel {
                 var node = outgoingEdge.graphNode();
                 var connectedMutableNode = mutableNodeById.computeIfAbsent(node.getNodeId(), id -> {
                     var stateCheckResult = systemStateChecker.checkSystemState(node.getRecoverableElements());
+                    String value = "<b>" + id + "</b> " +
+                            "<i>" + stateCheckResult + "</i> "
+                            + "<i>"
+                            + node.getRecoverableElements().serializeToHTML()
+                            + "</i>";
+                    System.out.println(value);
                     return mutNode(Label.html(
-                            "<b>" + id + "</b> " +
-                                    "<i>" + stateCheckResult + "</i> "
+                            value
                     ))
                             .add(calculateColorByStateCheckResult(stateCheckResult).font())
                             .add(Color.BLACK.background());
