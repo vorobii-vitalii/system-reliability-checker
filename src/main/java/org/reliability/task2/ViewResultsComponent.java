@@ -12,12 +12,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static guru.nidi.graphviz.model.Factory.mutGraph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
@@ -30,6 +33,8 @@ public class ViewResultsComponent extends JPanel {
     private JScrollPane resultsPane;
 
     public ViewResultsComponent(RecoverableElements recoverableElements, SystemStateChecker systemStateChecker) {
+        Graphviz.useEngine(new GraphvizCmdLineEngine().timeout(100, TimeUnit.HOURS));
+
         var visitedStates = new HashSet<RecoverableElements>();
         var queue = new LinkedList<RecoverableElements>();
         // Data
@@ -49,8 +54,6 @@ public class ViewResultsComponent extends JPanel {
             var currentGraphNode = nodeByElements.computeIfAbsent(elements, getGraphNodeCreator(nodeIdProvider));
 
             var elementsTransitions = elements.calculateTransitions(systemStateChecker);
-
-
 
             for (var elementsTransition : elementsTransitions) {
                 var alpha = elementsTransition.alpha();
@@ -120,13 +123,27 @@ public class ViewResultsComponent extends JPanel {
                             }
                             return res1;
                         });
-                var tableData = calculateTableData(iterationsResults);
                 var headers = createHeaders(iterationsResults);
+                var tableData = calculateTableData(iterationsResults);
+
+                File csvOutputFile = new File("result.csv");
+                try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+                    pw.println(String.join(";", headers));
+                    for (Object[] row : tableData) {
+                        pw.println(Stream.of(row).map(Object::toString).collect(Collectors.joining(";")));
+                    }
+
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
                 var table = new JTable(tableData, headers);
                 var scrollPane = new JScrollPane(table);
                 resultsPane = scrollPane;
                 table.setFillsViewportHeight(true);
+
                 add(scrollPane);
+
                 double sumValid = 0;
                 double[] lastResult = iterationsResults[iterationsResults.length - 2];
                 for (var i = 0; i < lastResult.length; i++) {
@@ -249,13 +266,16 @@ public class ViewResultsComponent extends JPanel {
             long start = System.currentTimeMillis();
             System.out.println("Creating PNG file!");
             try {
-                Graphviz.fromGraph(mutableGraph).render(Format.PNG).toFile(new File("output_graph.png"));
+                Graphviz.fromGraph(mutableGraph)
+                        .render(Format.PNG)
+                        .toFile(new File("output_graph.png"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             System.out.println("Created PNG file in " + (System.currentTimeMillis() - start) + " ms");
         }).start();
         long startBeforeJLabel = System.currentTimeMillis();
+
         JLabel image = new JLabel(new ImageIcon(Graphviz.fromGraph(mutableGraph)
                 .width(1920)
                 .height(1080)

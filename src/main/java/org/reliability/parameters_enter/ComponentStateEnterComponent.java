@@ -62,8 +62,8 @@ public class ComponentStateEnterComponent extends JPanel implements Observable<C
             return;
         }
         var componentState = new ComponentState(
-                new Alpha(recovery, componentId + "_recovery_" + kind),
-                new Alpha(failure, componentId + "_failure_" + kind),
+                new Alpha(recovery, componentId + "_rec_" + kind.getCode()),
+                new Alpha(failure, componentId + "_fail_" + kind.getCode()),
                 isAlwaysRecoverable ? new InfiniteComponentFailState() : new LimitedComponentFailState(numRecoveries),
                 false,
                 false
